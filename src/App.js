@@ -154,7 +154,15 @@ function App() {
         backgroundColor: state.connected ? "green" : "red",
       }}
     >
-      <div style={{ position: "absolute", left: 20, top: 20, fontSize: 30 }}>
+      <div
+        style={{
+          position: "absolute",
+          left: 20,
+          top: 20,
+          fontSize: 30,
+          display: state.battery ? "block" : "none",
+        }}
+      >
         Batterylevel: {state.battery ?? 0}%
       </div>
 
@@ -162,7 +170,7 @@ function App() {
         state.side !== null ? (
           <div style={{ fontSize: 90 }}>{state.side}</div>
         ) : (
-          <div style={{ fontSize: 90 }}>Waiting for side</div>
+          <div style={{ fontSize: 90 }}>I'll be ready momentarily</div>
         )
       ) : state.connecting ? (
         <button>Connect your Timeular</button>
