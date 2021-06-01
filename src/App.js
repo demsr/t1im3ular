@@ -151,7 +151,7 @@ function App() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: state.connected ? "green" : "red",
+        backgroundColor: state.connected ? "#238636" : "#b62324",
       }}
     >
       <div
