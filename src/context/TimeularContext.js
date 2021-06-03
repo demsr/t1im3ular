@@ -14,6 +14,7 @@ const Timeular = {
   info: null,
   powerState: null,
   battery: null,
+  tracker: null,
 };
 
 const TimeularContext = createContext();
@@ -42,6 +43,10 @@ function timeularReducer(state, action) {
       return { ...state, side: action.payload > 8 ? 0 : action.payload };
     case "battery_changed":
       return { ...state, battery: action.payload };
+    case "editTracker":
+      return { ...state, tracker: { ...state.tracker, ...action.payload } };
+    case "localStorage":
+      return { ...state, ...action.payload };
     default:
       throw new Error(`${action.type} not implemented`);
   }
@@ -53,9 +58,17 @@ function TimeularProvider(props) {
   const [bleDevice, setBleDevice] = useState(null);
 
   useEffect(() => {
-    if (state.side != null) {
+    if (state.tracker) {
+      console.log("writing state");
+      localStorage.setItem("timeularState", JSON.stringify(state.tracker));
     }
   }, [state]);
+
+  useEffect(() => {
+    let _s = localStorage.getItem("timeularState");
+    console.log("local", _s);
+    if (_s) dispatch({ type: "editTracker", payload: JSON.parse(_s) });
+  }, []);
 
   const connect = () => {
     navigator.bluetooth
@@ -149,9 +162,9 @@ function TimeularProvider(props) {
         }}
       >
         {state.connected ? (
-          <div style={{ fontSize: 90 }}>This shouldn't take too long</div>
+          <div style={{ fontSize: 40 }}>This shouldn't take too long</div>
         ) : state.connecting ? (
-          <div style={{ fontSize: 90 }}>Waiting for pairing</div>
+          <div style={{ fontSize: 40 }}>Waiting for pairing</div>
         ) : (
           <button onClick={connect}>Connect your Tracker</button>
         )}
@@ -159,7 +172,7 @@ function TimeularProvider(props) {
     );
   }
 
-  const value = { state, connect, disconnect };
+  const value = { state, dispatch, connect, disconnect };
   return (
     <TimeularContext.Provider value={value}>
       {state.ready ? props.children : waitingScreen()}

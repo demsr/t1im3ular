@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { DateTime } from "luxon";
 
 export default function Page() {
-  const { state: TimeState, connect } = useTimeular();
+  const { state: TimeState } = useTimeular();
   const { state: TrackingState } = useTracking();
 
   const [timer, setTimer] = useState(0);
@@ -65,14 +65,18 @@ export default function Page() {
         alignItems: "center",
         height: "100%",
         width: "100%",
+        flexDirection: "column",
       }}
     >
-      <div>
+      <div style={{ display: "flex" }}>
         <div style={{ fontSize: 70, textAlign: "center" }}>
-          Side {TimeState.side}
+          {TrackingState.isTracking
+            ? TimeState.tracker?.sides.find((x) => x.side === TimeState.side)
+                ?.name ?? `Side ${TimeState.side}`
+            : "Not Tracking"}
         </div>
-        <div style={{ fontSize: 90 }}>{formatTime()}</div>
       </div>
+      <div style={{ fontSize: 90 }}>{formatTime()}</div>
     </div>
   );
 }
