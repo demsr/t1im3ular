@@ -12,3 +12,23 @@ body {
 #root {
   height: 100vh;
 }
+
+input {
+  padding: 5px 12px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 14px;
+  line-height: 20px;
+
+  vertical-align: middle;
+
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  border: 1px solid;
+  border-radius: 6px;
+  outline: none;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  display: block;
+  width: 100%;
+}
