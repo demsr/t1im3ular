@@ -5,8 +5,10 @@ import {
   useReducer,
   useState,
 } from "react";
+
 import { useTimeular } from "../context/TimeularContext";
 const State = {
+  blockTracking: false,
   isTracking: false,
   startTime: null,
   entries: [],
@@ -21,6 +23,8 @@ function Reducer(state, action) {
       return { ...state, isTracking: true, startTime: action.payload };
     case "stopTracking":
       return { ...state, isTracking: false };
+    case "blockTracking":
+      return { ...state, blockTracking: action.payload };
     default:
       throw new Error(`${action.type} not implemented`);
   }
@@ -35,14 +39,27 @@ function Provider(props) {
 
   useEffect(() => {
     console.log("TrackingContext init");
+    localStorage.setItem("tracks", JSON.stringify({ entries: [] }));
   }, []);
 
   useEffect(() => {
+    console.log(state.blockTracking);
+    if (state.blockTracking) return;
     if (timeState.side !== null && timeState.side !== currentSide) {
       if (currentSide !== 0 && timeState.side === 0) {
         //stop tracking
 
-        dispatch({ type: "stopTracking", payload: Date.now() });
+        if (state.startTime) {
+          let _t = JSON.parse(localStorage.getItem("tracks"));
+
+          _t.entries.push({
+            start: state.startTime,
+            end: Date.now(),
+            side: currentSide,
+          });
+          localStorage.setItem("tracks", JSON.stringify(_t));
+          dispatch({ type: "stopTracking", payload: Date.now() });
+        }
       } else {
         //start tracking
 

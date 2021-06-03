@@ -3,6 +3,7 @@ import { useTimeular } from "./context/TimeularContext";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import IndexPage from "./pages/index";
+import ConfigPage from "./pages/config";
 import NavBar from "./components/navbar";
 import "./App.css";
 
@@ -28,6 +29,9 @@ function App() {
           }}
         >
           <Switch>
+            <Route path="/config">
+              <ConfigPage />
+            </Route>
             <Route path="/">
               <IndexPage />
             </Route>
