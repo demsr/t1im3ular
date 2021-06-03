@@ -8,6 +8,8 @@ import {
 import { useTimeular } from "../context/TimeularContext";
 const State = {
   isTracking: false,
+  startTime: null,
+  entries: [],
 };
 
 const Context = createContext();
@@ -15,33 +17,43 @@ const Context = createContext();
 function Reducer(state, action) {
   console.log("Reducer:", action);
   switch (action.type) {
+    case "startTracking":
+      return { ...state, isTracking: true, startTime: action.payload };
+    case "stopTracking":
+      return { ...state, isTracking: false };
     default:
       throw new Error(`${action.type} not implemented`);
   }
 }
 
 function Provider(props) {
-  const [tracking, dispatch] = useReducer(Reducer, State);
+  const [state, dispatch] = useReducer(Reducer, State);
 
   const { state: timeState } = useTimeular();
 
   const [currentSide, setCurrentSide] = useState(null);
 
   useEffect(() => {
+    console.log("TrackingContext init");
+  }, []);
+
+  useEffect(() => {
     if (timeState.side !== null && timeState.side !== currentSide) {
       if (currentSide !== 0 && timeState.side === 0) {
         //stop tracking
-        console.log("Start Tracking");
+
+        dispatch({ type: "stopTracking", payload: Date.now() });
       } else {
         //start tracking
-        console.log("Stop Tracking");
+
+        dispatch({ type: "startTracking", payload: Date.now() });
       }
 
       setCurrentSide(timeState.side);
     }
   }, [timeState, currentSide]);
 
-  const value = { tracking, dispatch };
+  const value = { state, dispatch };
   return <Context.Provider value={value}>{props.children}</Context.Provider>;
 }
 

@@ -9,6 +9,7 @@ import {
 const Timeular = {
   connecting: false,
   connected: false,
+  ready: false,
   side: null,
   info: null,
   powerState: null,
@@ -27,6 +28,11 @@ function timeularReducer(state, action) {
         ...state,
         connected: true,
         connecting: false,
+      };
+    case "setReady":
+      return {
+        ...state,
+        ready: true,
       };
     case "disconnected":
       return { ...Timeular };
@@ -109,6 +115,9 @@ function TimeularProvider(props) {
                 });
               }
             );
+            dispatch({
+              type: "setReady",
+            });
             let val = await characteristic.readValue();
             dispatch({
               type: "side_changed",
@@ -127,10 +136,33 @@ function TimeularProvider(props) {
     bleDevice.gat.disconnect();
   };
 
+  function waitingScreen() {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: state.connected ? "#238636" : "#b62324",
+        }}
+      >
+        {state.connected ? (
+          <div style={{ fontSize: 90 }}>This shouldn't take too long</div>
+        ) : state.connecting ? (
+          <div style={{ fontSize: 90 }}>Waiting for pairing</div>
+        ) : (
+          <button onClick={connect}>Connect your Tracker</button>
+        )}
+      </div>
+    );
+  }
+
   const value = { state, connect, disconnect };
   return (
     <TimeularContext.Provider value={value}>
-      {props.children}
+      {state.ready ? props.children : waitingScreen()}
     </TimeularContext.Provider>
   );
 }
