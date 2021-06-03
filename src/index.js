@@ -3,13 +3,19 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { TimeularProvider } from "./components/Timeular";
+import { TimeularProvider } from "./context/TimeularContext";
+import { TrackingProvider } from "./context/TrackingContext";
+import { AuthProvider } from "./context/AuthContext";
 
 ReactDOM.render(
   <React.StrictMode>
-    <TimeularProvider>
-      <App />
-    </TimeularProvider>
+    <AuthProvider>
+      <TimeularProvider>
+        <TrackingProvider>
+          <App />
+        </TrackingProvider>
+      </TimeularProvider>
+    </AuthProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
